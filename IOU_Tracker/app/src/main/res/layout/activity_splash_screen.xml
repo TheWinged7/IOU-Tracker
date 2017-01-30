@@ -10,8 +10,87 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.nick.myapplication.SplashScreen">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dark_grey"
+            android:padding="2dp">
+
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/proto_IOU"
+                android:padding="0dp"
+                android:background="@color/light_grey">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:columnCount="3"
+                    android:rowCount="2"
+                    android:id="@+id/proto_IOU_Layout">
+
+
+                    <TextView
+                        android:text="Title/Person"
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_row="0"
+                        android:textSize="18sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:id="@+id/proto_Title"
+                        android:layout_margin="5dp"
+                        android:layout_marginLeft="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:layout_row="0"
+                        android:layout_rowSpan="2"
+                        android:id="@+id/proto_complete"
+                        android:layout_margin="5dp"
+                        android:layout_marginTop="15dp" />
+
+                    <!--android:progressTint="@android:color/holo_blue_light" -->
+
+
+                    <TextView
+                        android:text="Due date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_row="1"
+                        android:layout_margin="5dp" />
+
+                    <ProgressBar
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="210dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_column="0"
+                        android:layout_row="1"
+                        tools:visibility="visible"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:progress="50"
+                        android:layout_margin="5dp" />
+
+
+                </GridLayout>
+
+            </TableRow>
+
+
+        </TableLayout>
+    </ScrollView>
 </RelativeLayout>
