@@ -8,11 +8,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.nick.myapplication.SplashScreen">
+    tools:context="com.example.nick.myapplication.SplashScreen"
+    android:background="@color/dark_grey">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/tasksScroll"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
@@ -21,27 +23,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/dark_grey"
-            android:padding="2dp">
+            android:padding="0dp"
+            android:id="@+id/IOUTable">
 
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/proto_IOU"
-                android:padding="0dp"
-                android:background="@color/light_grey">
+                android:padding="2dp"
+                android:background="@color/light_grey"
+               >
+                <!--
+                 android:background="@drawable/rounded_corners"
+                -->
 
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:columnCount="3"
                     android:rowCount="2"
-                    android:id="@+id/proto_IOU_Layout">
+                    android:id="@+id/proto_IOU_Layout"
+                    android:padding="2dp"
+                    >
 
+
+                    <!--android:progressTint="@android:color/holo_blue_light" -->
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_row="1"
+                        android:layout_rowSpan="1"
+                        android:id="@+id/proto_complete"
+                        android:layout_margin="5dp"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginTop="0dp" />
 
                     <TextView
                         android:text="Title/Person"
-                        android:layout_width="230dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="0"
                         android:layout_row="0"
@@ -51,43 +73,40 @@
                         android:layout_margin="5dp"
                         android:layout_marginLeft="0dp" />
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_column="2"
-                        android:layout_row="0"
-                        android:layout_rowSpan="2"
-                        android:id="@+id/proto_complete"
-                        android:layout_margin="5dp"
-                        android:layout_marginTop="15dp" />
-
-                    <!--android:progressTint="@android:color/holo_blue_light" -->
-
-
                     <TextView
                         android:text="Due date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
-                        android:layout_row="1"
-                        android:layout_margin="5dp" />
+                        android:layout_row="0"
+                        android:layout_margin="5dp"
+                        android:layout_marginLeft="10dp" />
 
-                    <ProgressBar
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_width="210dp"
+                    <TextView
+                        android:text="Payed/Owed (XXX%)"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:layout_column="0"
+                        android:id="@+id/proto_payed"
                         android:layout_row="1"
-                        tools:visibility="visible"
-                        android:indeterminate="false"
-                        android:max="100"
-                        android:progress="50"
-                        android:layout_margin="5dp" />
-
+                        android:layout_column="0"
+                        android:layout_marginLeft="10dp" />
 
                 </GridLayout>
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/testAdd">
+
+                <Button
+                    android:text="Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/testButton"
+                    android:elevation="0dp"
+                     />
             </TableRow>
 
 
