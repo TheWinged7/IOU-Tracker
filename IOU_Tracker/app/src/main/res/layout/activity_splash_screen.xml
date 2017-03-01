@@ -27,73 +27,7 @@
             android:id="@+id/IOUTable">
 
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/proto_IOU"
-                android:padding="2dp"
-                android:background="@color/light_grey"
-               >
-                <!--
-                 android:background="@drawable/rounded_corners"
-                -->
 
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:columnCount="3"
-                    android:rowCount="2"
-                    android:id="@+id/proto_IOU_Layout"
-                    android:padding="2dp"
-                    >
-
-
-                    <!--android:progressTint="@android:color/holo_blue_light" -->
-
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_column="1"
-                        android:layout_row="1"
-                        android:layout_rowSpan="1"
-                        android:id="@+id/proto_complete"
-                        android:layout_margin="5dp"
-                        android:layout_marginLeft="50dp"
-                        android:layout_marginTop="0dp" />
-
-                    <TextView
-                        android:text="Title/Person"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_column="0"
-                        android:layout_row="0"
-                        android:textSize="18sp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:id="@+id/proto_Title"
-                        android:layout_margin="5dp"
-                        android:layout_marginLeft="0dp" />
-
-                    <TextView
-                        android:text="Due date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_column="1"
-                        android:layout_row="0"
-                        android:layout_margin="5dp"
-                        android:layout_marginLeft="10dp" />
-
-                    <TextView
-                        android:text="Payed/Owed (XXX%)"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/proto_payed"
-                        android:layout_row="1"
-                        android:layout_column="0"
-                        android:layout_marginLeft="10dp" />
-
-                </GridLayout>
-
-            </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"

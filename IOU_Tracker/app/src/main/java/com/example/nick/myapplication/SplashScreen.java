@@ -8,9 +8,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -22,111 +27,79 @@ public class SplashScreen extends AppCompatActivity {
 
         Button b =(Button)findViewById(R.id.testButton);
 
+
         b.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        addDummyTask();
+                        Random R = new Random();
+                        int r = R.nextInt(100-10) +10;
+                        addNewRow("John", 100, r , new Date (2017, 5, 20), false);
+
                     }
                 }
 
         );
 
+        addNewRow("Jane", 100, 100, new Date (2017, 1, 5), true);
+
 
     }
 
- private void addDummyTask() //(int payed, int owed)
- {
-   //  foo();
-     TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
-     TableRow row = new TableRow(this);
-     GridLayout grid = new GridLayout(this);
-     TextView title = new TextView(this);
-     CheckBox completed = new CheckBox(this);
-     TextView payedBack = new TextView(this);
-     TextView due = new TextView(this);
+    private void  addNewRow(String person, int total, int payed, Date dueDate, boolean completed)
+    {
 
-     row.setLayoutParams(new TableRow.LayoutParams(  TableRow.LayoutParams.MATCH_PARENT,
-             TableRow.LayoutParams.WRAP_CONTENT)  );
-     row.setDividerPadding(2);
-     row.setBackgroundColor( getResources().getColor(R.color.light_grey) );
+        TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
+        TableRow row = new TableRow(this);
+        TableLayout.LayoutParams rowLayout=new TableLayout.LayoutParams
+                                (TableLayout.LayoutParams.MATCH_PARENT,
+                                TableLayout.LayoutParams.WRAP_CONTENT);
+        rowLayout.setMargins(0,5,0,5);
 
-
-     TableRow.LayoutParams gridParams = new TableRow.LayoutParams();
-     gridParams.height=TableRow.LayoutParams.WRAP_CONTENT;
-     gridParams.width=TableRow.LayoutParams.WRAP_CONTENT;
-
-     grid.setColumnCount(2);
-     grid.setRowCount(2);
-     grid.setPadding(0,2,2,2);
-     grid.setLayoutParams(gridParams);
-
-
-     TableRow.LayoutParams titleParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-             TableRow.LayoutParams.WRAP_CONTENT );
-
-     title.setText("Title/Person");
-     title.setTextAppearance(this, android.R.style.TextAppearance_Large);
-     title.setLayoutParams(titleParams);
-     title.setPadding(0,5,5,5);
-
-     getResources().getDisplayMetrics();
-
-     TableRow.LayoutParams compParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-             TableRow.LayoutParams.WRAP_CONTENT );
-
-
-     completed.setLayoutParams(compParams);
-     completed.setPadding(5,20,0,0);
-
-
-     TableRow.LayoutParams payedParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-             TableRow.LayoutParams.WRAP_CONTENT );
-
-     payedBack.setText("$Pay/Owe  (per%)");
-    // title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-     payedBack.setLayoutParams(payedParams);
-     payedBack.setPadding(0,10,0,0);
-
-
-     /*
-     payedBack.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-             TableRow.LayoutParams.WRAP_CONTENT ));
-*/
-
-
-     TableRow.LayoutParams dueParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-             TableRow.LayoutParams.WRAP_CONTENT );
-
-
-     due.setText("<DATE>");
-     due.setLayoutParams(dueParams);
-     due.setPadding(5,10,0,0);
-
-
-     row.addView(grid);
-     grid.addView(title, 0);
-     grid.addView(due, 1);
-     grid.addView(payedBack, 2);
-     grid.addView(completed, 3);
+        row.setLayoutParams(rowLayout);
+        row.setId( 100 + table.getChildCount() );
 
 
 
-     table.addView(row, table.getChildCount() -1);
+
+        LayoutInflater inf = (LayoutInflater)getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        View inflated = inf.inflate(R.layout.empty_row, row);
 
 
-     table.invalidate();
+        TextView title = (TextView) inflated.findViewById(R.id.title);
+        TextView owed = (TextView) inflated.findViewById(R.id.totalOwed);
+        TextView due = (TextView) inflated.findViewById(R.id.dueDate);
+        CheckBox payedFor = (CheckBox) inflated.findViewById(R.id.completed);
+        ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
 
-     findViewById(R.id.tasksScroll).invalidate();
+        SimpleDateFormat form = new SimpleDateFormat("dd-MMM-yy");
+        String date = form.format(Date.parse(dueDate.toString() ));
 
-    // toasty(Integer.toString(table.getChildCount()), 2 );
+
+        title.setText(person);
+        owed.setText(Integer.toString(total));
+        due.setText( date );
+        payedFor.setChecked(completed);
+      //  int percent =  (int)(((double)payed/(double)total) * 100);
+
+        progress.setProgress(0);
+        progress.setMax(total);
+        progress.setProgress(payed);
 
 
- }
+         toasty( Integer.toString(progress.getProgress() ) ,2);
+
+        table.addView(row, table.getChildCount()-1);
+
+        row.invalidate();
+        table.invalidate();
+    }
+
+
 
  private void foo()
  {
-     Toast.makeText(getBaseContext(), "Button works", Toast.LENGTH_LONG).show();
+     toasty ("button works",1);
  }
 
     private void toasty(String s, int leng)
