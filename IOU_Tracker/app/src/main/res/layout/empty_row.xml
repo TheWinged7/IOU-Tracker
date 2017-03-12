@@ -30,20 +30,7 @@
 
             <!--android:progressTint="@android:color/holo_blue_light" -->
 
-            <TextView
-                android:text="Title/Person"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_row="0"
-                android:textSize="18sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:layout_margin="5dp"
-                android:layout_marginLeft="0dp"
-                android:id = "@+id/title"
-                />
-
-            <CheckBox
+    <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
@@ -94,14 +81,29 @@
                 android:id = "@+id/dueDate"
                 />
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_margin="5dp"
+        android:layout_marginLeft="0dp"
+        android:layout_row="0"
+        android:text="Title/Person"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/payButton"
+        android:layout_width="43dp"
+        android:layout_height="32dp"
+        android:layout_column="1"
+        android:layout_row="0"
+        android:padding="0dp"
+        android:text="+" />
 
 
-
-
-
-
-
-        </GridLayout>
+</GridLayout>
 
 <!--
     </TableRow>

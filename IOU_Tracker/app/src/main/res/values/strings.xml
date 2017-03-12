@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="cancelButton">Cancel</string>
+    <string name="confirmButton">Confirm</string>
+    <string name="titleLabel">Title/Person</string>
+    <string name="totalLabel">Total Owed</string>
+    <string name="dueLable">Due Date</string>
+
+
+
 </resources>

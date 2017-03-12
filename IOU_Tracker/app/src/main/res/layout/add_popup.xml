@@ -2,19 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="50dp">
+    >
 
     <TextView
-        android:text="Title/Person"
+        android:text="@string/titleLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/titleLabel"
+        android:id="@+id/addTitleLabel"
         android:textSize="24sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:textColor="@android:color/black"
         android:layout_margin="5dp" />
+
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -27,112 +26,100 @@
             android:ems="10"
             android:id="@+id/titleBox"
             android:inputType="text"
-            android:editable="true"
             android:layout_width="match_parent"
-            android:layout_below="@+id/titleLabel"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/titleLabel"
-            android:singleLine="true"
+            android:maxLines="1"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="5dp" />
+            android:layout_marginStart="50dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            />
 
     </LinearLayout>
 
     <TextView
-        android:text="Total Owed"
+        android:text="@string/totalLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/totalLabel"
         android:textSize="24sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:textColor="@android:color/black"
         android:layout_margin="5dp" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="-20dp">
+        android:layout_margin="-20dp"
+        android:orientation="horizontal">
 
         <EditText
-            android:layout_height="wrap_content"
-            android:ems="10"
             android:id="@+id/owedBox"
-            android:inputType="numberDecimal"
-            android:editable="true"
             android:layout_width="match_parent"
-            android:layout_below="@+id/titleLabel"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/titleLabel"
-            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="5dp" />
+            android:layout_marginRight="5dp"
+            android:layout_marginStart="50dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLines="1" />
 
     </LinearLayout>
 
     <TextView
-        android:text="Due Date"
+        android:text="@string/dueLable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/dateLabel"
         android:textSize="24sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:textColor="@android:color/black"
         android:layout_margin="5dp" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="-20dp">
+        android:layout_margin="-20dp"
+        android:weightSum="1">
 
-        <EditText
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/dateBox"
-            android:editable="true"
+        <DatePicker
+            android:id="@+id/datePicker"
             android:layout_width="match_parent"
-            android:layout_below="@+id/titleLabel"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/titleLabel"
-            android:singleLine="true"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="5dp"
-            android:inputType="date" />
+            android:layout_height="100dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <Button
-            android:text="Confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/submitButton"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="50dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp" />
-
-        <Button
-            android:text="Cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="50dp"
+            android:inputType="numberDecimal"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp" />
+            android:paddingRight="20dp"
+
+
+            android:text="@string/cancelButton" />
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/confirmButton" />
+
     </LinearLayout>
 
 </LinearLayout>
