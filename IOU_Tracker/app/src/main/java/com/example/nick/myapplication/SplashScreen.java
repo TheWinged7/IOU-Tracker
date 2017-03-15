@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -67,6 +68,11 @@ public class SplashScreen extends AppCompatActivity {
 
                                         String title = TITLE.getText().toString();
                                         double total = Double.parseDouble( TOTAL.getText().toString() )  ;
+
+                                        final DecimalFormat df = new DecimalFormat("$#0.00");
+
+
+
                                         Date date = new Date(DATE.getYear() - 1900,
                                                 DATE.getMonth(), DATE.getDayOfMonth());
 
@@ -125,14 +131,62 @@ public class SplashScreen extends AppCompatActivity {
         ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
         final Button payBack = (Button) inflated.findViewById(R.id.payButton);
 
+        final Dialog d = new Dialog(this);
+
+        WindowManager.LayoutParams dLayout = new WindowManager.LayoutParams();
+        dLayout.copyFrom(d.getWindow().getAttributes());
+        dLayout.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        dLayout.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+
+        d.setContentView(R.layout.incriment_popup);
+        d.setTitle("Pay back Amount:");
+        d.getWindow().setAttributes(dLayout);
+
+
         payBack.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        d.show();
+
+
+                        Button cancel = (Button)d.findViewById(R.id.cancelButton);
+                        Button confirm = (Button)d.findViewById(R.id.submitButton);
+
+                        cancel.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        d.dismiss();
+                                    }
+                                }
+
+
+
+                        );
+
+                        confirm.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        d.dismiss();
+                                    }
+                                }
+
+
+
+                        );
+
                          /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             later replace pulling from/pushing to elements
                              to use the DB to get accurate numbers
                              !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+                    /*
                         ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
                         CheckBox payedFor = (CheckBox) inflated.findViewById(R.id.completed);
 
@@ -142,10 +196,15 @@ public class SplashScreen extends AppCompatActivity {
 
                         if (!completed  && payed < total)
                         {
+
+                        */
                             /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             later add a popup to select the amount payed back
                             and then increment by that number / total from DB
                              !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+
+                            /*
                             payed++;
                             progress.setProgress(payed);
                         }
@@ -155,6 +214,8 @@ public class SplashScreen extends AppCompatActivity {
                             payedFor.setClickable(false);
                             payBack.setEnabled(false);
                         }
+
+                        */
                     }
                 }
 
@@ -176,7 +237,7 @@ public class SplashScreen extends AppCompatActivity {
 
 
 
-         toasty( Integer.toString(progress.getProgress() ) ,2);
+       //  toasty( Integer.toString(progress.getProgress() ) ,2);
 
         table.addView(row, table.getChildCount()-1);
 

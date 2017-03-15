@@ -61,12 +61,13 @@
             android:layout_marginStart="50dp"
             android:ems="10"
             android:inputType="numberDecimal"
-            android:maxLines="1" />
+            android:maxLines="1"
+            />
 
     </LinearLayout>
 
     <TextView
-        android:text="@string/dueLable"
+        android:text="@string/dueLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/dateLabel"
@@ -102,7 +103,6 @@
             android:layout_marginLeft="40dp"
             android:layout_marginStart="40dp"
             android:layout_marginTop="30dp"
-            android:inputType="numberDecimal"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
 

@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="light_grey">#cccccc</color>
     <color name="dark_grey">#808080</color>
+    <color name="popup_bg">#e4e3e3</color>
 </resources>
