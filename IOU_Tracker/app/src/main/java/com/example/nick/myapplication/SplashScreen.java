@@ -17,6 +17,8 @@ import java.util.Random;
 
 public class SplashScreen extends AppCompatActivity {
 
+    final DBHelper DB = new DBHelper(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -273,6 +275,13 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        DB.close();
+        super.onDestroy();
+    }
 }
+
 
 

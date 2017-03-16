@@ -31,7 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private static final String SQL_Create_Table =
-            "CREATE TABLE" + dbEntry.TABLE_NAME + " ("+
+            "CREATE TABLE " + dbEntry.TABLE_NAME + " ("+
                     dbEntry._ID + " INTEGER PRIMARY KEY," +
                     dbEntry.COLUMN_TITLE + " TEXT," +
                     dbEntry.COLUMN_TOTAL + " REAL," +
@@ -49,7 +49,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public  void onCreate (SQLiteDatabase db) {
+
         db.execSQL(SQL_Create_Table);
+
     }
 
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -79,33 +81,64 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.insert(dbEntry.TABLE_NAME, null, values);
     }
 
+
+    public boolean deleteRow (long ID)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        if (rowExists( ID)) {
+
+            String selection = dbEntry._ID + " Like ?";
+            String[] selectionArgs = {Long.toString(ID)};
+            int i= db.delete(dbEntry.TABLE_NAME, selection, selectionArgs);
+            if (i==1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String[] getRowByID (long ID)
     {
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {
-                dbEntry._ID,
-                dbEntry.COLUMN_TITLE,
-                dbEntry.COLUMN_TOTAL,
-                dbEntry.COLUMN_PAYED,
-                dbEntry.COLUMN_DUE_DATE,
-                dbEntry.COLUMN_COMPLETED
+        if (rowExists( ID)) {
+            String[] projection = {
+                    dbEntry._ID,
+                    dbEntry.COLUMN_TITLE,
+                    dbEntry.COLUMN_TOTAL,
+                    dbEntry.COLUMN_PAYED,
+                    dbEntry.COLUMN_DUE_DATE,
+                    dbEntry.COLUMN_COMPLETED
             };
 
-        String selection = dbEntry._ID + " = ?";
-        String [] selectionArgs = {Long.toString(ID)};
-        String sortOrder = dbEntry._ID + " DESC";
+            String selection = dbEntry._ID + " = ?";
+            String[] selectionArgs = {Long.toString(ID)};
+            String sortOrder = dbEntry._ID + " DESC";
 
-        Cursor cur = db.query(
-                dbEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-                );
-        cur.close();
-        return projection;
+            Cursor cur = db.query(
+                    dbEntry.TABLE_NAME,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    sortOrder
+            );
+
+            String [] values = new String[6];
+
+            while (cur.moveToNext()) {
+                values [0] = cur.getString(cur.getColumnIndexOrThrow(dbEntry._ID ));
+                values [1] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TITLE ));
+                values [2] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TOTAL ));
+                values [3] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_PAYED ));
+                values [4] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_DUE_DATE ));
+                values [5] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_COMPLETED ));
+            }
+            cur.close();
+
+            return values;
+        }
+        return null;
     }
 
     public String getAllIDs ()
@@ -132,5 +165,21 @@ public class DBHelper extends SQLiteOpenHelper {
         cur.close();
         return IDs;
     }
+
+    private boolean rowExists (long ID)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM " + dbEntry.TABLE_NAME +
+                " WHERE " + dbEntry._ID + " = " + ID ;
+        Cursor c = db.rawQuery(query, null);
+        if (c.getCount() <=0)
+        {
+            c.close();
+            return false;
+        }
+        c.close();
+        return true;
+    }
+
 
 }
