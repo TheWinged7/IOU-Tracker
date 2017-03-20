@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -40,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     dbEntry.COLUMN_COMPLETED + " NUMERIC)"  ;
 
     private static final String SQL_Delete_Table =
-            "DROP TABLE IF EXISTS" + dbEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + dbEntry.TABLE_NAME;
 
 
 
@@ -61,6 +63,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public void deleteAll ()
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(SQL_Delete_Table);
+        onCreate(db);
     }
 
     public long insertRow (String title, double total, double payed, Date due, boolean complete) {
@@ -141,20 +150,85 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public String getAllIDs ()
+   public boolean editRow (long ID, String title, double total, double payed, Date due, boolean complete)
+   {
+       SQLiteDatabase db = getWritableDatabase();
+
+       String dueDate = due.toString();
+       String where =  dbEntry._ID + " = " + Long.toString(ID);
+
+       int completed =0;
+       if (complete)
+       {   completed=1;    }
+       ContentValues values = new ContentValues();
+       values.put(dbEntry.COLUMN_TITLE, title);
+       values.put(dbEntry.COLUMN_TOTAL, total);
+       values.put(dbEntry.COLUMN_PAYED, payed);
+       values.put(dbEntry.COLUMN_DUE_DATE, dueDate);
+       values.put(dbEntry.COLUMN_COMPLETED, completed);
+
+       db.update(dbEntry.TABLE_NAME, values, where, null);
+
+       return true;
+   }
+
+    public long getIDByIOU(String title, double total, double payed, Date due, boolean completed)
     {
         SQLiteDatabase db = getReadableDatabase();
-        String IDs = "";
+        long ID;
+        int comp =0;
+        if (completed)
+        {comp = 1;}
+        String query =  "SELECT " + dbEntry._ID + " FROM " + dbEntry.TABLE_NAME +
+                        " WHERE " + dbEntry.COLUMN_TITLE + " = \"" + title +
+                        "\" AND " + dbEntry.COLUMN_TOTAL + " = " + total +
+                        " AND " + dbEntry.COLUMN_PAYED + " = " + payed +
+                        " AND " + dbEntry.COLUMN_DUE_DATE + " = \"" + due.toString() +
+                        "\" AND " + dbEntry.COLUMN_COMPLETED + " = " +   comp + ";";
+
+        Cursor cur = db.rawQuery(query,null);
+
+        if (cur != null && cur.moveToFirst()) {
+            ID = cur.getLong(0);
+            return ID;
+        }
+        Log.d("ERROR FINDING ROW", "Could not find row:\n" + title + " " +
+                total + " " + payed + " " + due.toString() + " " + completed);
+
+        return -1;
+    }
+
+
+   public long getLastRowID()
+   {
+       SQLiteDatabase db = getReadableDatabase();
+       long ID ;
+       String query =   "select " + dbEntry._ID + " from " + dbEntry.TABLE_NAME +
+                        " ORDER BY " + dbEntry._ID + " DESC LIMIT 1";
+       Cursor cur = db.rawQuery(query,null);
+
+       if (cur != null && cur.moveToFirst()) {
+           ID = cur.getLong(0);
+           return ID;
+
+       }
+        return -1;
+   }
+
+    public long [] getAllIDs ()
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        String IDString = "";
 
         Cursor cur = db.rawQuery("select * from " + dbEntry.TABLE_NAME,null);
 
         if (cur.moveToFirst()) {
             while (cur.isAfterLast() == false) {
                 String id =   cur.getString(cur.getColumnIndex(dbEntry._ID)) ;
-                IDs+= id;
+                IDString+= id;
                 if (!cur.isLast())
                 {
-                    IDs +=",";
+                    IDString +=",";
                 }
 
 
@@ -163,6 +237,16 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         cur.close();
+
+        String [] temp = IDString.split(",");
+
+        long [] IDs = new long[temp.length];
+
+        for (int i=0; i<temp.length; i++)
+        {
+            IDs[i] = Long.parseLong(temp[i]);
+        }
+
         return IDs;
     }
 

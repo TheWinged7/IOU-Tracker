@@ -12,7 +12,6 @@ import android.widget.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -24,11 +23,14 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        Button b =(Button)findViewById(R.id.testButton);
+        Button addEntryButton =(Button)findViewById(R.id.newIOUButton);
         final Dialog d = new Dialog(this);
 
 
-        b.setOnClickListener(
+
+        load();
+
+        addEntryButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -89,12 +91,7 @@ public class SplashScreen extends AppCompatActivity {
                         );
 
                         d.show();
-                    /*
 
-
-
-                        addNewRow("John", 100, r , new Date (2017, 5, 20), false);
-                    */
                     }
                 }
 
@@ -109,17 +106,35 @@ public class SplashScreen extends AppCompatActivity {
                             Date dueDate,  boolean completed)
     {
 
+
+
+
+
         TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
         TableRow row = new TableRow(this);
         TableLayout.LayoutParams rowLayout=new TableLayout.LayoutParams
                                 (TableLayout.LayoutParams.MATCH_PARENT,
-                                TableLayout.LayoutParams.WRAP_CONTENT);
+                                TableLayout.LayoutParams.MATCH_PARENT);
         rowLayout.setMargins(0,5,0,5);
 
         row.setLayoutParams(rowLayout);
-        row.setId( 100 + table.getChildCount() );
+
+        long id;
+
+            DB.insertRow(person, total, payed, dueDate, completed);
+            id  = DB.getLastRowID();
 
 
+        table.addView(row, table.getChildCount()-1);
+
+        if (id!=-1) {
+            row.setId((int)id);
+           // toasty(Integer.toString(row.getId()), 1);
+        }
+        else
+        {
+            return;
+        }
 
 
         LayoutInflater inf = (LayoutInflater)getSystemService(this.LAYOUT_INFLATER_SERVICE);
@@ -133,6 +148,7 @@ public class SplashScreen extends AppCompatActivity {
         ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
         final Button payBack = (Button) inflated.findViewById(R.id.payButton);
 
+
         final Dialog d = new Dialog(this);
 
         WindowManager.LayoutParams dLayout = new WindowManager.LayoutParams();
@@ -141,7 +157,7 @@ public class SplashScreen extends AppCompatActivity {
         dLayout.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
 
-        d.setContentView(R.layout.incriment_popup);
+        d.setContentView(R.layout.edit_popup);
         d.setTitle("Pay back Amount:");
         d.getWindow().setAttributes(dLayout);
 
@@ -183,41 +199,7 @@ public class SplashScreen extends AppCompatActivity {
 
                         );
 
-                         /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            later replace pulling from/pushing to elements
-                             to use the DB to get accurate numbers
-                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-                    /*
-                        ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
-                        CheckBox payedFor = (CheckBox) inflated.findViewById(R.id.completed);
-
-                        boolean completed = payedFor.isChecked();
-                        int payed = progress.getProgress();
-                        int total = progress.getMax();
-
-                        if (!completed  && payed < total)
-                        {
-
-                        */
-                            /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            later add a popup to select the amount payed back
-                            and then increment by that number / total from DB
-                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
-
-                            /*
-                            payed++;
-                            progress.setProgress(payed);
-                        }
-                        if (payed>=total)
-                        {
-                            payedFor.setChecked(true);
-                            payedFor.setClickable(false);
-                            payBack.setEnabled(false);
-                        }
-
-                        */
                     }
                 }
 
@@ -239,20 +221,160 @@ public class SplashScreen extends AppCompatActivity {
 
 
 
-       //  toasty( Integer.toString(progress.getProgress() ) ,2);
-
-        table.addView(row, table.getChildCount()-1);
-
         row.invalidate();
         table.invalidate();
     }
 
 
+    private void  addNewRow(String person,  double total,  double payed,
+                            Date dueDate,  boolean completed, long ID)
+    {
 
- private void foo()
- {
-     toasty ("button works",1);
- }
+
+
+
+
+        TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
+        TableRow row = new TableRow(this);
+        TableLayout.LayoutParams rowLayout=new TableLayout.LayoutParams
+                (TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.MATCH_PARENT);
+        rowLayout.setMargins(0,5,0,5);
+
+        row.setLayoutParams(rowLayout);
+
+        table.addView(row, table.getChildCount()-1);
+
+
+        row.setId((int)ID);
+       // toasty(Integer.toString(row.getId()), 1);
+
+
+
+
+        LayoutInflater inf = (LayoutInflater)getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        final View inflated = inf.inflate(R.layout.empty_row, row);
+
+
+        TextView title = (TextView) inflated.findViewById(R.id.title);
+        TextView owed = (TextView) inflated.findViewById(R.id.totalOwed);
+        TextView due = (TextView) inflated.findViewById(R.id.dueDate);
+        CheckBox payedFor = (CheckBox) inflated.findViewById(R.id.completed);
+        ProgressBar progress = (ProgressBar) inflated.findViewById(R.id.progress);
+        final Button payBack = (Button) inflated.findViewById(R.id.payButton);
+
+
+        final Dialog d = new Dialog(this);
+
+        WindowManager.LayoutParams dLayout = new WindowManager.LayoutParams();
+        dLayout.copyFrom(d.getWindow().getAttributes());
+        dLayout.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        dLayout.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+
+        d.setContentView(R.layout.edit_popup);
+        d.setTitle("Pay back Amount:");
+        d.getWindow().setAttributes(dLayout);
+
+
+        payBack.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        d.show();
+
+
+                        Button cancel = (Button)d.findViewById(R.id.cancelButton);
+                        Button confirm = (Button)d.findViewById(R.id.submitButton);
+
+                        cancel.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        d.dismiss();
+                                    }
+                                }
+
+
+
+                        );
+
+                        confirm.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        d.dismiss();
+                                    }
+                                }
+
+
+
+                        );
+
+
+                    }
+                }
+
+
+
+        );
+
+        SimpleDateFormat form = new SimpleDateFormat("dd-MMM-yy");
+        String date = form.format(Date.parse(dueDate.toString() ));
+
+
+        title.setText(person);
+        owed.setText(Double.toString(total));
+        due.setText( date );
+        payedFor.setChecked(completed);
+
+        progress.setProgress(0);
+        progress.setMax(100);
+
+
+
+        row.invalidate();
+        table.invalidate();
+    }
+
+    private void load ()
+    {
+
+        long [] ids =DB.getAllIDs();
+
+        for (int i=0; i<ids.length; i++)
+        {
+            String[] row = DB.getRowByID(ids[i]);
+            String title =row[1];
+            double total, payed;
+            total = Double.parseDouble(row[2]);
+            payed = Double.parseDouble(row[3]);
+            Date due =  new Date(row[4]);
+            boolean completed = false;
+            if (row[5] == "true")
+            {
+                completed= true;
+            }
+
+            if (title.contains("test2"))
+            {
+               DB.deleteRow(ids[i]);
+            }
+
+
+
+            addNewRow(title, total, payed, due, completed, ids[i]);
+        }
+
+    }
+
+    private void foo()
+    {
+        toasty ("button works",1);
+    }
 
     private void toasty(String s, int leng)
     {
@@ -280,6 +402,7 @@ public class SplashScreen extends AppCompatActivity {
     protected void onDestroy() {
         DB.close();
         super.onDestroy();
+
     }
 }
 

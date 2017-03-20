@@ -14,9 +14,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="28dp"
         android:text="@string/payed"
         android:textColor="@android:color/black"
         android:textSize="24sp" />
@@ -26,15 +26,39 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_below="@+id/payedLabel"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
         android:layout_marginEnd="35dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginRight="35dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/posOrNeg"
         android:layout_toStartOf="@+id/posOrNeg"
         android:ems="10"
         android:inputType="numberDecimal" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/payedLabel"
+        android:layout_alignRight="@+id/payedLabel"
+        android:layout_below="@+id/editText"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="29dp"
+        android:text="@string/dueLabel"
+        android:textColor="@android:color/black"
+        android:textSize="24sp" />
+
+    <DatePicker
+        android:id="@+id/datePicker2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner" />
 
     <RadioGroup
         android:id="@+id/posOrNeg"
@@ -46,7 +70,11 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:checkedButton="@+id/negative"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"
+        android:paddingRight="20dp">
 
         <RadioButton
             android:id="@+id/positive"
@@ -61,6 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/minus" />
+
     </RadioGroup>
 
     <LinearLayout
@@ -69,8 +98,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/editText"
-        android:layout_marginTop="15dp"
+        android:layout_below="@+id/datePicker2"
+        android:layout_marginTop="23dp"
         android:orientation="horizontal">
 
         <Button
@@ -90,15 +119,25 @@
             android:id="@+id/submitButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginRight="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:text="@string/confirmButton" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_alignTop="@+id/payedLabel"
+        android:layout_alignLeft="@+id/posOrNeg"
+        android:layout_alignStart="@+id/posOrNeg" />
 
 </RelativeLayout>

@@ -5,10 +5,11 @@
     <string name="titleLabel">Title/Person</string>
     <string name="totalLabel">Total Owed</string>
     <string name="dueLabel">Due Date</string>
-    <string name="plusMinus">+/-</string>
+    <string name="editButton">Edit</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="payed">Amount Payed</string>
+    <string name="addIOUButton">New IOU</string>
 
 
 
