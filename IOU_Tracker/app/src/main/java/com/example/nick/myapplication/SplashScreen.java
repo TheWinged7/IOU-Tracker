@@ -2,6 +2,9 @@ package com.example.nick.myapplication;
 
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,15 +21,30 @@ public class SplashScreen extends AppCompatActivity {
 
     final DBHelper DB = new DBHelper(this);
 
+    private ListView mDrawerList;
+    private ArrayAdapter<String> mAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+
+        mDrawerList = (ListView)findViewById(R.id.navList);
+        String[] osArray = { "NEW IOU", "Test All" };
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        mDrawerList.setAdapter(mAdapter);
+
         Button addEntryButton =(Button)findViewById(R.id.newIOUButton);
         final Dialog d = new Dialog(this);
 
-
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(SplashScreen.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         load();
 
@@ -102,6 +120,7 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
+    //for new entry from scratch
     private void  addNewRow(String person,  double total,  double payed,
                             Date dueDate,  boolean completed)
     {
@@ -226,22 +245,27 @@ public class SplashScreen extends AppCompatActivity {
     }
 
 
-    private void  addNewRow(String person,  double total,  double payed,
-                            Date dueDate,  boolean completed, long ID)
+    //for existing entry loaded from DB
+    private void  addNewRow(String person, double total, double payed,
+                            final Date dueDate, boolean completed, final long ID)
     {
 
-
-
-
-
         TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
-        TableRow row = new TableRow(this);
+        final TableRow row = new TableRow(this);
         TableLayout.LayoutParams rowLayout=new TableLayout.LayoutParams
                 (TableLayout.LayoutParams.MATCH_PARENT,
                         TableLayout.LayoutParams.MATCH_PARENT);
-        rowLayout.setMargins(0,5,0,5);
 
-        row.setLayoutParams(rowLayout);
+        if (table.getChildCount() <=1){
+            foo();
+            rowLayout.setMargins(0,20,0,5);
+
+        }
+        else{
+            rowLayout.setMargins(0,5,0,5);
+        }
+
+            row.setLayoutParams(rowLayout);
 
         table.addView(row, table.getChildCount()-1);
 
@@ -287,6 +311,7 @@ public class SplashScreen extends AppCompatActivity {
 
                         Button cancel = (Button)d.findViewById(R.id.cancelButton);
                         Button confirm = (Button)d.findViewById(R.id.submitButton);
+                        Button delete = (Button)d.findViewById(R.id.deleteButton);
 
                         cancel.setOnClickListener(
                                 new View.OnClickListener() {
@@ -305,7 +330,7 @@ public class SplashScreen extends AppCompatActivity {
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
+                                        editRow(  Integer.toString(row.getId()), 0, dueDate);
                                         d.dismiss();
                                     }
                                 }
@@ -314,6 +339,42 @@ public class SplashScreen extends AppCompatActivity {
 
                         );
 
+                        delete.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        toasty(Long.toString(ID), 1);
+                                        new AlertDialog.Builder( v.getContext() )
+                                                .setTitle("Confirm Delete")
+                                                .setMessage("Are you sure you want to DELETE this IOU?")
+                                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                                .setPositiveButton(android.R.string.yes,
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                //replace this later with proper delete call
+                                                                toasty("delete confirmed", 1);
+
+                                                                d.dismiss();
+                                                            }
+                                                        })
+                                                .setNegativeButton(android.R.string.no,
+                                                        new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        //
+                                                        toasty("delete canceled", 1);
+                                                        //d.dismiss();
+                                                    }
+                                                })
+                                                .show();
+
+
+
+                                    }
+                                }
+
+                        );
 
                     }
                 }
@@ -340,6 +401,13 @@ public class SplashScreen extends AppCompatActivity {
         table.invalidate();
     }
 
+
+    private void editRow(String ID, double payed, Date date)
+    {
+        toasty ("edit triggered" ,1);
+    }
+
+
     private void load ()
     {
 
@@ -358,13 +426,6 @@ public class SplashScreen extends AppCompatActivity {
             {
                 completed= true;
             }
-
-            if (title.contains("test2"))
-            {
-               DB.deleteRow(ids[i]);
-            }
-
-
 
             addNewRow(title, total, payed, due, completed, ids[i]);
         }

@@ -7,8 +7,9 @@
     android:background="@color/light_grey"
     android:columnCount="3"
     android:orientation="vertical"
-    android:padding="2dp"
-    android:rowCount="2">
+    android:padding="5dp"
+    android:rowCount="2"
+    android:layout_marginLeft="20dp">
 
 
     <!--android:progressTint="@android:color/holo_blue_light" -->
