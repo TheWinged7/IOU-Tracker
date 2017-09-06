@@ -4,17 +4,22 @@ package com.example.nick.myapplication;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
+import android.os.Handler;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -23,6 +28,9 @@ public class SplashScreen extends AppCompatActivity {
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
+    private DrawerLayout mDrawerLayout;
+
+
 
 
     @Override
@@ -31,18 +39,41 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
 
+
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.activity_splash_screen);
+
         mDrawerList = (ListView)findViewById(R.id.navList);
-        String[] osArray = { "NEW IOU", "Test All" };
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        String[] navDrawArray = { "NEW IOU", "Test All" };
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navDrawArray);
         mDrawerList.setAdapter(mAdapter);
 
         Button addEntryButton =(Button)findViewById(R.id.newIOUButton);
-        final Dialog d = new Dialog(this);
+
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(SplashScreen.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
+
+                toasty("Button: " + mAdapter.getItem(position) , 1);
+
+                mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_splash_screen);
+                switch (position)
+                {
+                    case 0: //NEW IOU
+                        newRow();
+                        mDrawerLayout.closeDrawers();
+                        break;
+
+                    case 1: //Test All
+                        mDrawerLayout.closeDrawers();
+                        testFunctions();
+                        break;
+
+                    default:
+                        toasty("OOPS! item not found", 0);
+                        break;
+                }
+
             }
         });
 
@@ -52,63 +83,7 @@ public class SplashScreen extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        WindowManager.LayoutParams dLayout = new WindowManager.LayoutParams();
-                        dLayout.copyFrom(d.getWindow().getAttributes());
-                        dLayout.width = WindowManager.LayoutParams.MATCH_PARENT;
-                        dLayout.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-
-                        d.setContentView(R.layout.add_popup);
-                        d.setTitle("Add new IOU");
-                        d.getWindow().setAttributes(dLayout);
-
-                        Button cancel = (Button)d.findViewById(R.id.cancelButton);
-                        Button confirm = (Button)d.findViewById(R.id.submitButton);
-                        final EditText TITLE = (EditText) d.findViewById(R.id.titleBox);
-                        final EditText TOTAL = (EditText) d.findViewById(R.id.owedBox);
-                        final DatePicker DATE = (DatePicker) d.findViewById(R.id.datePicker) ;
-
-
-                        cancel.setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                    d.dismiss();
-                                    }
-                                }
-
-
-
-                        );
-
-                        confirm.setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        String title = TITLE.getText().toString();
-                                        double total = Double.parseDouble( TOTAL.getText().toString() )  ;
-
-                                        final DecimalFormat df = new DecimalFormat("$#0.00");
-
-
-
-                                        Date date = new Date(DATE.getYear() - 1900,
-                                                DATE.getMonth(), DATE.getDayOfMonth());
-
-                                        addNewRow(title, total, 0 , date, false);
-
-                                        d.dismiss();
-                                    }
-                                }
-
-
-
-                        );
-
-                        d.show();
+                    newRow();
 
                     }
                 }
@@ -120,9 +95,108 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
+
+    /*
+    !!++!!++!!++!!++!!++!!++!!++!!++!!++
+    FOR TESTING ONLY
+    */
+
+    private void testButtons()
+    {
+
+    }
+
+    private void testFunctions()
+    {
+        addNewRow("foobar", 12.34, 1.23, new Date(2017, 5, 1));
+
+
+        (new Handler()).postDelayed(new Runnable()
+        {
+            @Override
+            public void run() {
+                ArrayList<String> IDs = getRowsByName("foobar");
+
+                for (String S: IDs) {
+                    Log.d("Test-ID", S);
+                    deleteRow(Integer.parseInt(S));
+                }
+            }
+        }, 2000);
+
+
+
+    }
+
+    /*
+        !!++!!++!!++!!++!!++!!++!!++!!++!!++
+     */
+
+    private void newRow()
+    {
+        final Dialog d = new Dialog(this);;
+
+        WindowManager.LayoutParams dLayout = new WindowManager.LayoutParams();
+        dLayout.copyFrom(d.getWindow().getAttributes());
+        dLayout.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dLayout.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+
+        d.setContentView(R.layout.add_popup);
+        d.setTitle("Add new IOU");
+        d.getWindow().setAttributes(dLayout);
+
+        Button cancel = (Button)d.findViewById(R.id.cancelButton);
+        Button confirm = (Button)d.findViewById(R.id.submitButton);
+        final EditText TITLE = (EditText) d.findViewById(R.id.titleBox);
+        final EditText TOTAL = (EditText) d.findViewById(R.id.owedBox);
+        final DatePicker DATE = (DatePicker) d.findViewById(R.id.datePicker) ;
+
+
+        cancel.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        d.dismiss();
+                    }
+                }
+
+
+
+        );
+
+        confirm.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String title = TITLE.getText().toString();
+                        double total = Double.parseDouble( TOTAL.getText().toString() )  ;
+
+                        final DecimalFormat df = new DecimalFormat("$#0.00");
+
+
+
+                        Date date = new Date(DATE.getYear() - 1900,
+                                DATE.getMonth(), DATE.getDayOfMonth());
+
+                        addNewRow(title, total, 0 , date);
+
+                        d.dismiss();
+                    }
+                }
+
+
+
+        );
+
+        d.show();
+    }
+
     //for new entry from scratch
     private void  addNewRow(String person,  double total,  double payed,
-                            Date dueDate,  boolean completed)
+                            Date dueDate)
     {
 
 
@@ -140,7 +214,7 @@ public class SplashScreen extends AppCompatActivity {
 
         long id;
 
-            DB.insertRow(person, total, payed, dueDate, completed);
+            DB.insertRow(person, total, payed, dueDate, false);
             id  = DB.getLastRowID();
 
 
@@ -233,7 +307,7 @@ public class SplashScreen extends AppCompatActivity {
         title.setText(person);
         owed.setText(Double.toString(total));
         due.setText( date );
-        payedFor.setChecked(completed);
+        payedFor.setChecked(false);
 
         progress.setProgress(0);
         progress.setMax(100);
@@ -257,7 +331,7 @@ public class SplashScreen extends AppCompatActivity {
                         TableLayout.LayoutParams.MATCH_PARENT);
 
         if (table.getChildCount() <=1){
-            foo();
+          //  foo();
             rowLayout.setMargins(0,20,0,5);
 
         }
@@ -311,7 +385,7 @@ public class SplashScreen extends AppCompatActivity {
 
                         Button cancel = (Button)d.findViewById(R.id.cancelButton);
                         Button confirm = (Button)d.findViewById(R.id.submitButton);
-                        Button delete = (Button)d.findViewById(R.id.deleteButton);
+                        final Button delete = (Button)d.findViewById(R.id.deleteButton);
 
                         cancel.setOnClickListener(
                                 new View.OnClickListener() {
@@ -343,7 +417,7 @@ public class SplashScreen extends AppCompatActivity {
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        toasty(Long.toString(ID), 1);
+
                                         new AlertDialog.Builder( v.getContext() )
                                                 .setTitle("Confirm Delete")
                                                 .setMessage("Are you sure you want to DELETE this IOU?")
@@ -353,7 +427,7 @@ public class SplashScreen extends AppCompatActivity {
                                                             @Override
                                                             public void onClick(DialogInterface dialog, int which) {
                                                                 //replace this later with proper delete call
-                                                                toasty("delete confirmed", 1);
+                                                                deleteRow(ID);
 
                                                                 d.dismiss();
                                                             }
@@ -362,9 +436,7 @@ public class SplashScreen extends AppCompatActivity {
                                                         new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
-                                                        //
-                                                        toasty("delete canceled", 1);
-                                                        //d.dismiss();
+
                                                     }
                                                 })
                                                 .show();
@@ -405,8 +477,37 @@ public class SplashScreen extends AppCompatActivity {
     private void editRow(String ID, double payed, Date date)
     {
         toasty ("edit triggered" ,1);
+
+        TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
+        TableRow row = (TableRow)findViewById(Integer.parseInt(ID));
+        row.invalidate();
+        table.invalidate();
     }
 
+    private void deleteRow(long ID)
+    {
+        String title = DB.getRowByID(ID)[1];
+        DB.deleteRow( ID);
+
+        TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
+        table.removeView( (TableRow)findViewById((int)ID));
+        table.invalidate();
+
+    }
+
+    private  ArrayList<String> getRowsByName(String name)
+    {
+        ArrayList<String> IDs = DB.getIDsByTitle(name);
+
+        if (IDs.size() >=0)
+        {
+            return IDs;
+        }
+        else
+        {
+            return  null;
+        }
+    }
 
     private void load ()
     {

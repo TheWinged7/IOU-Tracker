@@ -9,6 +9,8 @@ import android.provider.BaseColumns;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -186,7 +188,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         " AND " + dbEntry.COLUMN_DUE_DATE + " = \"" + due.toString() +
                         "\" AND " + dbEntry.COLUMN_COMPLETED + " = " +   comp + ";";
 
-        Cursor cur = db.rawQuery(query,null);
+        Cursor cur = db.rawQuery(query, null);
 
         if (cur != null && cur.moveToFirst()) {
             ID = cur.getLong(0);
@@ -198,6 +200,26 @@ public class DBHelper extends SQLiteOpenHelper {
         return -1;
     }
 
+    public ArrayList<String> getIDsByTitle(String title)
+    {
+        ArrayList<String> results = new ArrayList<String >();
+        SQLiteDatabase db = getReadableDatabase();
+        String query =  "SELECT " + dbEntry._ID + " FROM " + dbEntry.TABLE_NAME +
+                        " WHERE " +dbEntry.COLUMN_TITLE + " = \"" + title + "\"";
+        Cursor cur = db.rawQuery(query, null);
+
+        if (cur!=null && cur.moveToFirst())
+        {
+            while (cur.isAfterLast()==false)
+            {
+                results.add( cur.getString(cur.getColumnIndex(dbEntry._ID)) );
+
+                cur.moveToNext();
+            }
+        }
+
+        return results;
+    }
 
    public long getLastRowID()
    {
@@ -215,12 +237,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return -1;
    }
 
+
     public long [] getAllIDs ()
     {
         SQLiteDatabase db = getReadableDatabase();
         String IDString = "";
-
-        Cursor cur = db.rawQuery("select * from " + dbEntry.TABLE_NAME,null);
+        long [] IDs;
+        Cursor cur = db.rawQuery("select * from " + dbEntry.TABLE_NAME, null);
 
         if (cur.moveToFirst()) {
             while (cur.isAfterLast() == false) {
@@ -235,12 +258,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 cur.moveToNext();
             }
         }
+        else
+        {
+            IDs = new long[0];
+            return IDs;
+        }
 
         cur.close();
 
         String [] temp = IDString.split(",");
 
-        long [] IDs = new long[temp.length];
+        IDs = new long[temp.length];
 
         for (int i=0; i<temp.length; i++)
         {
