@@ -67,11 +67,20 @@ public class DBHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void deleteAll ()
+    public boolean deleteAll ()
     {
         SQLiteDatabase db = getReadableDatabase();
-        db.execSQL(SQL_Delete_Table);
-        onCreate(db);
+        boolean success = true;
+        try {
+            db.execSQL(SQL_Delete_Table);
+            onCreate(db);
+        } catch (Exception e)
+        {
+            success= false;
+            Log.e("deleteAll", e.toString());
+        }
+
+        return success;
     }
 
     public long insertRow (String title, double total, double payed, Date due, boolean complete) {
@@ -108,7 +117,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public String[] getRowByID (long ID)
+    public ArrayList<String> getRowByID (long ID)
     {
         SQLiteDatabase db = getReadableDatabase();
         if (rowExists( ID)) {
@@ -135,24 +144,24 @@ public class DBHelper extends SQLiteOpenHelper {
                     sortOrder
             );
 
-            String [] values = new String[6];
+            ArrayList<String> values = new ArrayList<>();
 
             while (cur.moveToNext()) {
-                values [0] = cur.getString(cur.getColumnIndexOrThrow(dbEntry._ID ));
-                values [1] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TITLE ));
-                values [2] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TOTAL ));
-                values [3] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_PAYED ));
-                values [4] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_DUE_DATE ));
-                values [5] = cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_COMPLETED ));
+                values.add( cur.getString(cur.getColumnIndexOrThrow(dbEntry._ID )) );
+                values.add( cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TITLE )) );
+                values.add( cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_TOTAL )) );
+                values.add(  cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_PAYED )) );
+                values.add(  cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_DUE_DATE )) );
+                values.add(  cur.getString(cur.getColumnIndexOrThrow(dbEntry.COLUMN_COMPLETED )) );
             }
             cur.close();
 
             return values;
         }
-        return null;
+        return new ArrayList<>();
     }
 
-   public boolean editRow (long ID, String title, double total, double payed, Date due, boolean complete)
+   public boolean editRow (long ID, double total, double payed, Date due, boolean complete)
    {
        SQLiteDatabase db = getWritableDatabase();
 
@@ -163,15 +172,18 @@ public class DBHelper extends SQLiteOpenHelper {
        if (complete)
        {   completed=1;    }
        ContentValues values = new ContentValues();
-       values.put(dbEntry.COLUMN_TITLE, title);
+       //values.put(dbEntry.COLUMN_TITLE, title);
        values.put(dbEntry.COLUMN_TOTAL, total);
        values.put(dbEntry.COLUMN_PAYED, payed);
        values.put(dbEntry.COLUMN_DUE_DATE, dueDate);
        values.put(dbEntry.COLUMN_COMPLETED, completed);
 
-       db.update(dbEntry.TABLE_NAME, values, where, null);
+       if (db.update(dbEntry.TABLE_NAME, values, where, null)>0)
+       {
+           return true;
+       }
 
-       return true;
+       return false;
    }
 
     public long getIDByIOU(String title, double total, double payed, Date due, boolean completed)
@@ -204,9 +216,20 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<String> results = new ArrayList<String >();
         SQLiteDatabase db = getReadableDatabase();
-        String query =  "SELECT " + dbEntry._ID + " FROM " + dbEntry.TABLE_NAME +
-                        " WHERE " +dbEntry.COLUMN_TITLE + " = \"" + title + "\"";
-        Cursor cur = db.rawQuery(query, null);
+
+        String selection = dbEntry.COLUMN_TITLE + " = ?";
+        String[] selectionArgs = {title};
+        String sortOrder = dbEntry._ID + " DESC";
+
+        Cursor cur = db.query(
+                dbEntry.TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
 
         if (cur!=null && cur.moveToFirst())
         {
@@ -225,15 +248,25 @@ public class DBHelper extends SQLiteOpenHelper {
    {
        SQLiteDatabase db = getReadableDatabase();
        long ID ;
-       String query =   "select " + dbEntry._ID + " from " + dbEntry.TABLE_NAME +
-                        " ORDER BY " + dbEntry._ID + " DESC LIMIT 1";
-       Cursor cur = db.rawQuery(query,null);
 
-       if (cur != null && cur.moveToFirst()) {
+       Cursor cur = db.query(
+               dbEntry.TABLE_NAME,
+               new String[] {dbEntry._ID},
+               null,
+               null,
+               null,
+               null,
+               null
+       );
+
+       if (cur != null && cur.moveToLast()) {
            ID = cur.getLong(0);
            return ID;
 
        }
+
+       Log.e("GetRowByID", "ERROR, cur could not move or was null!");
+       Log.d("Can move to last?", Boolean.toString(cur.moveToLast()));
         return -1;
    }
 

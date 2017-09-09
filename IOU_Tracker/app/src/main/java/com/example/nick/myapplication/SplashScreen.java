@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.*;
 import android.os.Handler;
@@ -43,18 +44,18 @@ public class SplashScreen extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout)findViewById(R.id.activity_splash_screen);
 
         mDrawerList = (ListView)findViewById(R.id.navList);
-        String[] navDrawArray = { "NEW IOU", "Test All" };
+        String[] navDrawArray = { getResources().getString(R.string.addIOUButton), "Test Functions", "Test Buttons/Fields" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navDrawArray);
         mDrawerList.setAdapter(mAdapter);
 
-        Button addEntryButton =(Button)findViewById(R.id.newIOUButton);
+
 
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                toasty("Button: " + mAdapter.getItem(position) , 1);
+               // toasty("Button: " + mAdapter.getItem(position) , 1);
 
                 mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_splash_screen);
                 switch (position)
@@ -69,6 +70,11 @@ public class SplashScreen extends AppCompatActivity {
                         testFunctions();
                         break;
 
+                    case 2:
+                        mDrawerLayout.closeDrawers();
+                        toasty("test coming soon\u2122", 0);
+                        break;
+
                     default:
                         toasty("OOPS! item not found", 0);
                         break;
@@ -78,17 +84,6 @@ public class SplashScreen extends AppCompatActivity {
         });
 
         load();
-
-        addEntryButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    newRow();
-
-                    }
-                }
-
-        );
 
       //  addNewRow("Jane", 100, 100, new Date (2017, 1, 5), true);
 
@@ -110,6 +105,22 @@ public class SplashScreen extends AppCompatActivity {
     {
         addNewRow("foobar", 12.34, 1.23, new Date(2017, 5, 1));
 
+        //gotta do tests for bobby tables
+        addNewRow("Bobby\"); DROP TABLE IOUs;--", 12.34, 1.23, new Date(2017, 5, 1));
+        addNewRow("Bobby\'); DROP TABLE IOUs;--", 12.34, 1.23, new Date(2017, 5, 1));
+
+        (new Handler()).postDelayed(new Runnable()
+        {
+            @Override
+            public void run() {
+
+                ArrayList<String> IDs = getRowsByName("foobar");
+                toasty("Edited entry \"foobar\"", 0);
+                for (String S: IDs) {
+                     editRow(S, 34.56, 12.30,new Date(2017, 5, 1) );
+                }
+            }
+        }, 2000);
 
         (new Handler()).postDelayed(new Runnable()
         {
@@ -118,11 +129,15 @@ public class SplashScreen extends AppCompatActivity {
                 ArrayList<String> IDs = getRowsByName("foobar");
 
                 for (String S: IDs) {
-                    Log.d("Test-ID", S);
                     deleteRow(Integer.parseInt(S));
                 }
+
+                IDs = getRowsByName("Bobby\"); DROP TABLE IOUs;--");
+                deleteRow((Integer.parseInt(IDs.get(IDs.size()-1) ) ) );
+                IDs = getRowsByName("Bobby\'); DROP TABLE IOUs;--");
+                deleteRow((Integer.parseInt(IDs.get(IDs.size()-1) ) ) );
             }
-        }, 2000);
+        }, 5000);
 
 
 
@@ -208,7 +223,14 @@ public class SplashScreen extends AppCompatActivity {
         TableLayout.LayoutParams rowLayout=new TableLayout.LayoutParams
                                 (TableLayout.LayoutParams.MATCH_PARENT,
                                 TableLayout.LayoutParams.MATCH_PARENT);
-        rowLayout.setMargins(0,5,0,5);
+        
+        if (table.getChildCount() <=1){
+            rowLayout.setMargins(0,20,0,5);
+
+        }
+        else{
+            rowLayout.setMargins(0,5,0,5);
+        }
 
         row.setLayoutParams(rowLayout);
 
@@ -404,7 +426,7 @@ public class SplashScreen extends AppCompatActivity {
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        editRow(  Integer.toString(row.getId()), 0, dueDate);
+                                       // editRow(  Integer.toString(row.getId()),0 , 0, dueDate);
                                         d.dismiss();
                                     }
                                 }
@@ -474,19 +496,31 @@ public class SplashScreen extends AppCompatActivity {
     }
 
 
-    private void editRow(String ID, double payed, Date date)
+    private boolean editRow(String ID, double total, double payed, Date date)
     {
-        toasty ("edit triggered" ,1);
+        boolean completed = false;
+        if (payed>= total)
+        {
+            completed = true;
+        }
 
-        TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
-        TableRow row = (TableRow)findViewById(Integer.parseInt(ID));
-        row.invalidate();
-        table.invalidate();
+        if (DB.editRow(Long.parseLong(ID), total, payed, date, completed)) {
+            TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
+            TableRow row = (TableRow) findViewById(Integer.parseInt(ID));
+            TextView t = (TextView)((GridLayout) row.getChildAt(0)).getChildAt(2);
+            t.setText(Double.toString(total));
+            row.invalidate();
+            table.invalidate();
+
+            return true;
+        }
+
+        return false;
     }
 
     private void deleteRow(long ID)
     {
-        String title = DB.getRowByID(ID)[1];
+        String title = DB.getRowByID(ID).get(1);
         DB.deleteRow( ID);
 
         TableLayout table = (TableLayout) findViewById(R.id.IOUTable);
@@ -516,14 +550,14 @@ public class SplashScreen extends AppCompatActivity {
 
         for (int i=0; i<ids.length; i++)
         {
-            String[] row = DB.getRowByID(ids[i]);
-            String title =row[1];
+            ArrayList<String> row = DB.getRowByID(ids[i]);
+            String title =row.get(1);
             double total, payed;
-            total = Double.parseDouble(row[2]);
-            payed = Double.parseDouble(row[3]);
-            Date due =  new Date(row[4]);
+            total = Double.parseDouble(row.get(2));
+            payed = Double.parseDouble(row.get(3));
+            Date due =  new Date(row.get(4));
             boolean completed = false;
-            if (row[5] == "true")
+            if (row.get(5) == "true")
             {
                 completed= true;
             }

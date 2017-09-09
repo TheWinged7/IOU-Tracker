@@ -40,15 +40,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/testAdd">
 
-                <Button
-                    android:id="@+id/newIOUButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/new_button"
-                    android:layerType="software"
-                    android:text="@string/addIOUButton" />
-
             </TableRow>
 
 

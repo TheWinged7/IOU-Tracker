@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Simple IOU Tracker</string>
     <string name="cancelButton">Cancel</string>
     <string name="confirmButton">Confirm</string>
     <string name="titleLabel">Title/Person</string>
